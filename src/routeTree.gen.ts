@@ -9,12 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UpgraderRouteImport } from './routes/upgrader'
 import { Route as SlotsRouteImport } from './routes/slots'
 import { Route as RouletteRouteImport } from './routes/roulette'
 import { Route as RocketRouteImport } from './routes/rocket'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as InventoryRouteImport } from './routes/inventory'
+import { Route as CasesRouteImport } from './routes/cases'
 import { Route as IndexRouteImport } from './routes/index'
 
+const UpgraderRoute = UpgraderRouteImport.update({
+  id: '/upgrader',
+  path: '/upgrader',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SlotsRoute = SlotsRouteImport.update({
   id: '/slots',
   path: '/slots',
@@ -30,9 +39,24 @@ const RocketRoute = RocketRouteImport.update({
   path: '/rocket',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InventoryRoute = InventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CasesRoute = CasesRouteImport.update({
+  id: '/cases',
+  path: '/cases',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -43,44 +67,95 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cases': typeof CasesRoute
+  '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/rocket': typeof RocketRoute
   '/roulette': typeof RouletteRoute
   '/slots': typeof SlotsRoute
+  '/upgrader': typeof UpgraderRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cases': typeof CasesRoute
+  '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/rocket': typeof RocketRoute
   '/roulette': typeof RouletteRoute
   '/slots': typeof SlotsRoute
+  '/upgrader': typeof UpgraderRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/cases': typeof CasesRoute
+  '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/rocket': typeof RocketRoute
   '/roulette': typeof RouletteRoute
   '/slots': typeof SlotsRoute
+  '/upgrader': typeof UpgraderRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/rocket' | '/roulette' | '/slots'
+  fullPaths:
+    | '/'
+    | '/cases'
+    | '/inventory'
+    | '/login'
+    | '/profile'
+    | '/rocket'
+    | '/roulette'
+    | '/slots'
+    | '/upgrader'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/rocket' | '/roulette' | '/slots'
-  id: '__root__' | '/' | '/login' | '/rocket' | '/roulette' | '/slots'
+  to:
+    | '/'
+    | '/cases'
+    | '/inventory'
+    | '/login'
+    | '/profile'
+    | '/rocket'
+    | '/roulette'
+    | '/slots'
+    | '/upgrader'
+  id:
+    | '__root__'
+    | '/'
+    | '/cases'
+    | '/inventory'
+    | '/login'
+    | '/profile'
+    | '/rocket'
+    | '/roulette'
+    | '/slots'
+    | '/upgrader'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CasesRoute: typeof CasesRoute
+  InventoryRoute: typeof InventoryRoute
   LoginRoute: typeof LoginRoute
+  ProfileRoute: typeof ProfileRoute
   RocketRoute: typeof RocketRoute
   RouletteRoute: typeof RouletteRoute
   SlotsRoute: typeof SlotsRoute
+  UpgraderRoute: typeof UpgraderRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/upgrader': {
+      id: '/upgrader'
+      path: '/upgrader'
+      fullPath: '/upgrader'
+      preLoaderRoute: typeof UpgraderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/slots': {
       id: '/slots'
       path: '/slots'
@@ -102,11 +177,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RocketRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inventory': {
+      id: '/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof InventoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cases': {
+      id: '/cases'
+      path: '/cases'
+      fullPath: '/cases'
+      preLoaderRoute: typeof CasesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -121,10 +217,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CasesRoute: CasesRoute,
+  InventoryRoute: InventoryRoute,
   LoginRoute: LoginRoute,
+  ProfileRoute: ProfileRoute,
   RocketRoute: RocketRoute,
   RouletteRoute: RouletteRoute,
   SlotsRoute: SlotsRoute,
+  UpgraderRoute: UpgraderRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
