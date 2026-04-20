@@ -1,0 +1,80 @@
+import { Link, Outlet, useLocation } from "@tanstack/react-router";
+import { useAuth } from "@/lib/auth";
+import { Particles } from "./Particles";
+import { Rocket, Dices, CircleDot, Package, Sparkles, User, LogOut, Wallet } from "lucide-react";
+
+const NAV = [
+  { to: "/rocket", label: "Ракета", icon: Rocket },
+  { to: "/slots", label: "Слоты", icon: Dices },
+  { to: "/roulette", label: "Рулетка", icon: CircleDot },
+  { to: "/cases", label: "Кейсы", icon: Package },
+  { to: "/upgrader", label: "Апгрейд", icon: Sparkles },
+  { to: "/inventory", label: "Инвентарь", icon: Wallet },
+];
+
+export function Layout() {
+  const { user, logout } = useAuth();
+  const loc = useLocation();
+
+  return (
+    <div className="relative min-h-screen text-foreground">
+      <Particles />
+
+      <header className="sticky top-0 z-30 px-4 pt-4">
+        <div className="glass-strong mx-auto flex max-w-6xl items-center justify-between rounded-2xl px-4 py-3">
+          <Link to="/" className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[image:var(--gradient-primary)] shadow-[var(--shadow-glow)]">
+              <Sparkles className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <span className="font-display text-lg font-bold tracking-tight glow-text">CRYPTO<span className="text-primary">.CASINO</span></span>
+          </Link>
+
+          {user ? (
+            <div className="flex items-center gap-3">
+              <div className="glass hidden rounded-xl px-3 py-1.5 sm:flex sm:items-center sm:gap-2">
+                <Wallet className="h-4 w-4 text-primary" />
+                <span className="font-mono text-sm font-semibold tabular-nums">{(user.balance ?? 0).toLocaleString()}</span>
+                <span className="text-xs text-muted-foreground">CR</span>
+              </div>
+              <Link to="/profile" className="glass flex h-9 w-9 items-center justify-center rounded-xl transition hover:scale-105">
+                <User className="h-4 w-4" />
+              </Link>
+              <button onClick={logout} className="glass flex h-9 w-9 items-center justify-center rounded-xl transition hover:scale-105" title="Выйти">
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="btn-primary rounded-xl px-4 py-2 text-sm">Войти</Link>
+          )}
+        </div>
+      </header>
+
+      <main className="relative z-10 mx-auto max-w-6xl px-4 pb-32 pt-6">
+        <Outlet />
+      </main>
+
+      {user && (
+        <nav className="fixed bottom-4 left-1/2 z-30 w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2">
+          <div className="glass-strong flex items-center justify-around rounded-2xl px-2 py-2">
+            {NAV.map((item) => {
+              const Icon = item.icon;
+              const active = loc.pathname.startsWith(item.to);
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`flex flex-1 flex-col items-center gap-0.5 rounded-xl px-2 py-2 transition ${
+                    active ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span className="text-[10px] font-medium">{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      )}
+    </div>
+  );
+}
