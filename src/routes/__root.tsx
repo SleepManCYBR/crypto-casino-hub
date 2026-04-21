@@ -8,8 +8,8 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "Crypto Casino — NFT, Crash, Slots" },
-      { name: "description", content: "Криптоказино с играми, NFT кейсами и апгрейдером." },
+      { title: "CHERNIHIV CASINO — NFT, Crash, Slots" },
+      { name: "description", content: "CHERNIHIV CASINO — криптоказино с играми, NFT кейсами и апгрейдером." },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),

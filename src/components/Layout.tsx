@@ -26,18 +26,32 @@ export function Layout() {
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[image:var(--gradient-primary)] shadow-[var(--shadow-glow)]">
               <Sparkles className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-display text-lg font-bold tracking-tight glow-text">CRYPTO<span className="text-primary">.CASINO</span></span>
+            <span className="font-display text-base font-bold tracking-tight glow-text sm:text-lg">
+              CHERNIHIV<span className="text-primary"> CASINO</span>
+            </span>
           </Link>
 
           {user ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <div className="glass hidden rounded-xl px-3 py-1.5 sm:flex sm:items-center sm:gap-2">
                 <Wallet className="h-4 w-4 text-primary" />
                 <span className="font-mono text-sm font-semibold tabular-nums">{(user.balance ?? 0).toLocaleString()}</span>
                 <span className="text-xs text-muted-foreground">CR</span>
               </div>
-              <Link to="/profile" className="glass flex h-9 w-9 items-center justify-center rounded-xl transition hover:scale-105">
-                <User className="h-4 w-4" />
+              <Link
+                to="/profile"
+                className="flex items-center gap-2 rounded-xl px-2.5 py-1.5 transition hover:scale-[1.03]"
+                style={{
+                  background: "var(--gradient-primary)",
+                  color: "var(--primary-foreground)",
+                  boxShadow: "var(--shadow-glow)",
+                }}
+                title="Личный кабинет"
+              >
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-black/20 text-sm font-bold">
+                  {user.username[0]?.toUpperCase() ?? "?"}
+                </div>
+                <span className="hidden text-sm font-semibold sm:block">{user.username}</span>
               </Link>
               <button onClick={logout} className="glass flex h-9 w-9 items-center justify-center rounded-xl transition hover:scale-105" title="Выйти">
                 <LogOut className="h-4 w-4" />

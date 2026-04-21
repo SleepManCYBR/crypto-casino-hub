@@ -8,9 +8,7 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     tsConfigPaths(),
-    tanstackStart({
-      target: "netlify",
-    }),
+    tanstackStart(),
     react(),
   ],
 });

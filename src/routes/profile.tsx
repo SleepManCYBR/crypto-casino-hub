@@ -2,15 +2,27 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { RequireAuth, PageHeader } from "@/components/RequireAuth";
 import { useUserNfts } from "@/lib/nft";
-import { User, Wallet, Shield, Calendar, LogOut, Star, TrendingUp, Award, Settings } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { Wallet, Calendar, LogOut, Star, Award, Settings, Palette, Check } from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/profile")({ component: () => <RequireAuth><ProfilePage /></RequireAuth> });
 
+const THEMES: { key: string; label: string; swatch: string }[] = [
+  { key: "green",  label: "Зелёная",    swatch: "linear-gradient(135deg, oklch(0.82 0.22 150), oklch(0.68 0.2 160))" },
+  { key: "purple", label: "Фиолетовая", swatch: "linear-gradient(135deg, oklch(0.78 0.23 305), oklch(0.62 0.22 295))" },
+  { key: "orange", label: "Оранжевая",  swatch: "linear-gradient(135deg, oklch(0.82 0.2 65), oklch(0.68 0.2 50))" },
+  { key: "gold",   label: "Золотая",    swatch: "linear-gradient(135deg, oklch(0.88 0.18 95), oklch(0.74 0.16 80))" },
+  { key: "red",    label: "Красная",    swatch: "linear-gradient(135deg, oklch(0.74 0.25 28), oklch(0.58 0.23 20))" },
+  { key: "blue",   label: "Синяя",      swatch: "linear-gradient(135deg, oklch(0.72 0.21 265), oklch(0.55 0.2 255))" },
+  { key: "cyan",   label: "Голубая",    swatch: "linear-gradient(135deg, oklch(0.83 0.16 205), oklch(0.68 0.15 195))" },
+];
+
 function ProfilePage() {
-  const { user, logout } = useAuth();
+  const { user, logout, refresh } = useAuth();
   const { items } = useUserNfts(user?.username);
-  const [activeTab, setActiveTab] = useState<"stats" | "nfts" | "account">("stats");
+  const [activeTab, setActiveTab] = useState<"stats" | "nfts" | "themes" | "account">("stats");
+  const [savingTheme, setSavingTheme] = useState<string | null>(null);
 
   if (!user) return null;
 
@@ -126,28 +138,83 @@ function ProfilePage() {
       </div>
 
       {/* Tabs */}
-      <div className="glass mb-4 flex rounded-2xl p-1 gap-1">
+      <div className="glass mb-4 flex rounded-2xl p-1 gap-1 overflow-x-auto">
         {([
           { key: "stats", label: "📊 Статистика" },
           { key: "nfts", label: "🎨 NFT" },
+          { key: "themes", label: "🎨 Темы" },
           { key: "account", label: "⚙️ Аккаунт" },
         ] as const).map(tab => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className="flex-1 rounded-xl py-2.5 text-sm font-medium transition-all"
+            className="flex-1 whitespace-nowrap rounded-xl px-3 py-2.5 text-sm font-medium transition-all"
             style={{
-              background: activeTab === tab.key
-                ? "linear-gradient(135deg, oklch(0.82 0.22 150), oklch(0.68 0.2 160))"
-                : "transparent",
-              color: activeTab === tab.key ? "oklch(0.12 0.04 155)" : "oklch(0.7 0.04 155)",
-              boxShadow: activeTab === tab.key ? "0 2px 10px oklch(0.78 0.25 145 / 0.3)" : "none",
+              background: activeTab === tab.key ? "var(--gradient-primary)" : "transparent",
+              color: activeTab === tab.key ? "var(--primary-foreground)" : "oklch(0.7 0.04 155)",
+              boxShadow: activeTab === tab.key ? "var(--shadow-glow)" : "none",
             }}
           >
             {tab.label}
           </button>
         ))}
       </div>
+
+      {activeTab === "themes" && (
+        <div className="glass-strong rounded-2xl p-5">
+          <div className="mb-4 flex items-center gap-2 text-sm font-semibold">
+            <Palette className="h-4 w-4 text-primary" /> Цветовая тема профиля
+          </div>
+          <p className="mb-4 text-xs text-muted-foreground">
+            Выбранная тема перекрасит акценты по всему сайту: кнопки, свечение, активные элементы.
+          </p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {THEMES.map((t) => {
+              const active = user.theme === t.key;
+              const saving = savingTheme === t.key;
+              return (
+                <button
+                  key={t.key}
+                  disabled={saving}
+                  onClick={async () => {
+                    if (active) return;
+                    setSavingTheme(t.key);
+                    try {
+                      // optimistic: apply immediately
+                      document.documentElement.setAttribute("data-theme", t.key);
+                      const { error } = await supabase
+                        .from("users")
+                        .update({ theme: t.key })
+                        .eq("id", user.id);
+                      if (error) {
+                        console.warn("theme save failed:", error.message);
+                      }
+                      await refresh();
+                    } finally {
+                      setSavingTheme(null);
+                    }
+                  }}
+                  className={`relative overflow-hidden rounded-2xl p-3 text-left transition hover:scale-[1.03] ${
+                    active ? "ring-2 ring-primary shadow-[var(--shadow-glow)]" : "ring-1 ring-border"
+                  }`}
+                  style={{ background: t.swatch }}
+                >
+                  <div className="h-14 w-full rounded-lg bg-black/25" />
+                  <div className="mt-2 flex items-center justify-between">
+                    <span className="text-xs font-bold" style={{ color: "oklch(0.15 0.04 155)" }}>
+                      {t.label}
+                    </span>
+                    {active && <Check className="h-4 w-4" style={{ color: "oklch(0.15 0.04 155)" }} />}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <div className="mt-4 text-[11px] text-muted-foreground">
+            Текущая тема: <span className="font-mono text-primary">{user.theme}</span>
+          </div>
+        </div>
+      )}
 
       {/* Tab content */}
       {activeTab === "stats" && (
