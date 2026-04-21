@@ -38,7 +38,11 @@ function CasesPage() {
       try {
         await giveNftToUser(user.username, winner.id);
         setMsg(`🎁 Получено: ${winner.name} (${winner.price} CR)`);
-      } catch (e: any) { setMsg(e.message); }
+      } catch (e: any) {
+        // Silent: show only friendly message to the user
+        console.warn("nft_owners insert failed:", e?.message);
+        setMsg(`🎁 Дроп: ${winner.name} (${winner.price} CR) — не сохранился в инвентарь, проверь RLS политики`);
+      }
     }, 4500);
   };
 
