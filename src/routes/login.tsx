@@ -36,7 +36,7 @@ function LoginPage() {
             <Sparkles className="h-5 w-5 text-primary-foreground" />
           </div>
           <div>
-            <div className="font-display text-xl font-bold glow-text">CRYPTO.CASINO</div>
+            <div className="font-display text-xl font-bold glow-text">CHERNIHIV CASINO</div>
             <div className="text-xs text-muted-foreground">{mode === "login" ? "Вход в аккаунт" : "Регистрация"}</div>
           </div>
         </div>
