@@ -2,15 +2,27 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { RequireAuth, PageHeader } from "@/components/RequireAuth";
 import { useUserNfts } from "@/lib/nft";
-import { User, Wallet, Shield, Calendar, LogOut, Star, TrendingUp, Award, Settings } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { Wallet, Calendar, LogOut, Star, Award, Settings, Palette, Check } from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/profile")({ component: () => <RequireAuth><ProfilePage /></RequireAuth> });
 
+const THEMES: { key: string; label: string; swatch: string }[] = [
+  { key: "green",  label: "Зелёная",    swatch: "linear-gradient(135deg, oklch(0.82 0.22 150), oklch(0.68 0.2 160))" },
+  { key: "purple", label: "Фиолетовая", swatch: "linear-gradient(135deg, oklch(0.78 0.23 305), oklch(0.62 0.22 295))" },
+  { key: "orange", label: "Оранжевая",  swatch: "linear-gradient(135deg, oklch(0.82 0.2 65), oklch(0.68 0.2 50))" },
+  { key: "gold",   label: "Золотая",    swatch: "linear-gradient(135deg, oklch(0.88 0.18 95), oklch(0.74 0.16 80))" },
+  { key: "red",    label: "Красная",    swatch: "linear-gradient(135deg, oklch(0.74 0.25 28), oklch(0.58 0.23 20))" },
+  { key: "blue",   label: "Синяя",      swatch: "linear-gradient(135deg, oklch(0.72 0.21 265), oklch(0.55 0.2 255))" },
+  { key: "cyan",   label: "Голубая",    swatch: "linear-gradient(135deg, oklch(0.83 0.16 205), oklch(0.68 0.15 195))" },
+];
+
 function ProfilePage() {
-  const { user, logout } = useAuth();
+  const { user, logout, refresh } = useAuth();
   const { items } = useUserNfts(user?.username);
-  const [activeTab, setActiveTab] = useState<"stats" | "nfts" | "account">("stats");
+  const [activeTab, setActiveTab] = useState<"stats" | "nfts" | "themes" | "account">("stats");
+  const [savingTheme, setSavingTheme] = useState<string | null>(null);
 
   if (!user) return null;
 
