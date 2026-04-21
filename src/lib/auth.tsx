@@ -42,6 +42,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loadUser(Number(raw)).finally(() => setLoading(false));
   }, [loadUser]);
 
+  // Apply user theme to <html data-theme="...">
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const t = user?.theme || "green";
+    document.documentElement.setAttribute("data-theme", t);
+  }, [user?.theme]);
+
   const refresh = useCallback(async () => {
     if (user) await loadUser(user.id);
   }, [user, loadUser]);
